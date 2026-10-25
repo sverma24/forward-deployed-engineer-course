@@ -4,10 +4,14 @@ Each tool returns plain data plus a "source", so every answer can say exactly
 where its facts came from.
 """
 
+import time
+
 from . import approvals, db, docs
 from .grid import GridClient, GridUnavailable
 
 _grid = None
+_cache = {}            # area code -> (time fetched, live status)
+CACHE_SECONDS = 60     # on a storm night, 50 agents asking about S-07 cost the grid service one call a minute
 
 
 def grid():
@@ -37,7 +41,12 @@ def get_outage_status(area_code):
     result = {"area_code": area_code, "outage_log": logged,
               "source": f"outage log {logged['outage_id']}" if logged else "outage log (no open outage)"}
     try:
-        live = grid().area_status(area_code)
+        hit = _cache.get(area_code)
+        if hit and time.time() - hit[0] < CACHE_SECONDS:
+            live = hit[1]
+        else:
+            live = grid().area_status(area_code)
+            _cache[area_code] = (time.time(), live)
         result["live_status"] = live
         result["source"] += f"; grid status service, updated {live['updated_at']}"
     except GridUnavailable as e:

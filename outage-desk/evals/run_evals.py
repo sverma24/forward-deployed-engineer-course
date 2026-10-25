@@ -49,10 +49,10 @@ def run_one(q):
     try:
         out = agent.ask(q["question"], context=q["customer_message"], trace=False)
     except Exception as e:  # a crash is a failed case, not a stopped run
-        out = {"answer": f"ERROR: {e}", "sources": [], "seconds": 0, "turns": 0}
+        out = {"answer": f"ERROR: {e}", "sources": [], "seconds": 0, "turns": 0, "cost_usd": 0}
     ok, failed = score(q, out)
     return {**q, "passed": ok, "failed_checks": ",".join(failed), "answer": out["answer"],
-            "sources": "; ".join(out["sources"]), "seconds": out["seconds"]}
+            "sources": "; ".join(out["sources"]), "seconds": out["seconds"], "cost_usd": out.get("cost_usd", 0)}
 
 
 def main():
@@ -72,8 +72,12 @@ def main():
         mark = "PASS" if r["passed"] else f"FAIL ({r['failed_checks']})"
         print(f"{r['id']}  {mark:28} {r['question'][:60]}")
     passed = sum(r["passed"] for r in results)
+    secs = sorted(r["seconds"] for r in results)
+    cost = sum(r["cost_usd"] for r in results)
     print(f"\nScore: {passed}/{len(results)} ({100 * passed // max(len(results), 1)}%)  "
           f"backend={MODEL_BACKEND}  {time.time() - started:.0f} s")
+    print(f"Per answer: median {secs[len(secs) // 2]} s, slowest {secs[-1]} s, "
+          f"API-price cost ${cost / len(results):.4f}")
     for cat, (p, n) in sorted(by_cat.items()):
         print(f"  {cat:16} {p}/{n}")
 

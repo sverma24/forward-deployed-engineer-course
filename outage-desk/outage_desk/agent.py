@@ -72,6 +72,7 @@ def run_tool(call):
 
 def ask(question, context="", backend=None, trace=True):
     """Answer one question. Returns the answer, its sources and every step taken."""
+    model.reset_usage()
     system = SYSTEM.format(tools=describe(), now=now().strftime("%b %d, %Y %I:%M %p Eastern"))
     transcript = f"Agent's question: {question}"
     if context:
@@ -97,6 +98,7 @@ def ask(question, context="", backend=None, trace=True):
     else:
         result = {"answer": "I couldn't finish looking this up. Please check the systems directly.",
                   "sources": [], "turns": MAX_TURNS, "seconds": round(time.time() - started, 1), "steps": steps}
+    result["cost_usd"] = round(model.usage.cost_usd, 5)
     if trace:
         _trace(question, result)
     return result
@@ -107,7 +109,9 @@ def _trace(question, result):
     with TRACE_LOG.open("a") as f:
         f.write(json.dumps({"id": uuid.uuid4().hex[:8], "at": now().isoformat(), "question": question,
                             "answer": result["answer"], "sources": result["sources"],
-                            "turns": result["turns"], "seconds": result["seconds"],
+                            "turns": result["turns"], "seconds": result["seconds"], "cost_usd": result["cost_usd"],
+                            "live_errors": sum(1 for s in result["steps"] for r in s.get("results", [])
+                                               if isinstance(r["result"], dict) and r["result"].get("live_error")),
                             "tools": [r["tool"] for s in result["steps"] for r in s.get("results", [])]},
                            default=str) + "\n")
 

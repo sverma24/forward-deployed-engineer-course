@@ -12,6 +12,7 @@ import json
 import os
 import subprocess
 import tempfile
+import threading
 
 import httpx
 
@@ -36,6 +37,16 @@ class ModelError(Exception):
     pass
 
 
+# What each call would have cost at API prices, as reported by Claude Code. On a Claude plan
+# you don't pay this per call, but it's the number a client paying for the API would see.
+# Kept per thread, so evals that run several questions at once still count each one separately.
+usage = threading.local()
+
+
+def reset_usage():
+    usage.calls, usage.cost_usd = 0, 0.0
+
+
 def decide(system, transcript, backend=None):
     backend = backend or MODEL_BACKEND
     if backend == "claude":
@@ -57,6 +68,8 @@ def _claude(system, transcript):
     if p.returncode != 0:
         raise ModelError(f"claude -p failed: {p.stderr.strip()[:300]}")
     out = json.loads(p.stdout)
+    usage.calls = getattr(usage, "calls", 0) + 1
+    usage.cost_usd = getattr(usage, "cost_usd", 0.0) + (out.get("total_cost_usd") or 0.0)
     if out.get("is_error") or not out.get("structured_output"):
         raise ModelError(f"no structured output: {out.get('result', '')[:300]}")
     return out["structured_output"]
@@ -64,11 +77,12 @@ def _claude(system, transcript):
 
 def _ollama(system, transcript):
     r = httpx.post(f"{OLLAMA_URL}/api/chat", timeout=180, json={
-        "model": OLLAMA_MODEL, "stream": False, "format": DECISION_SCHEMA,
+        "model": OLLAMA_MODEL, "stream": False, "format": DECISION_SCHEMA, "think": False,
         "options": {"temperature": 0},
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": transcript}],
     })
     r.raise_for_status()
+    usage.calls = getattr(usage, "calls", 0) + 1
     try:
         return json.loads(r.json()["message"]["content"])
     except (KeyError, json.JSONDecodeError) as e:
