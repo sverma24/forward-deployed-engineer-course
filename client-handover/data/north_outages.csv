@@ -1,0 +1,32 @@
+OutageID,Area,Start,Est_Restore,Cause,Status,Crew
+N5100,N-11 Old Town,10/19/2026 10:00 PM,10/20/2026 07:00 AM,Pole damaged,Closed,CRW-02
+N5101,N-14 Canal Heights,10/20/2026 11:00 PM,10/21/2026 03:00 AM,Transformer fault,Closed,CRW-01
+N5102,N-11 Old Town,10/21/2026 02:00 AM,10/21/2026 04:00 PM,Storm damage,Closed,CRW-09
+N5103,N-03 Lakeview,10/22/2026 12:00 AM,10/22/2026 04:00 AM,Pole damaged,Closed,CRW-08
+N5104,N-18 Maple Grove,10/21/2026 10:00 PM,10/22/2026 04:00 AM,Planned maintenance,Closed,CRW-08
+N5105,N-22 Northgate,10/23/2026 07:00 AM,10/23/2026 09:00 AM,Pole damaged,Closed,CRW-09
+N5106,N-03 Lakeview,10/24/2026 03:00 PM,10/25/2026 12:00 AM,Transformer fault,Closed,CRW-03
+N5107,N-11 Old Town,10/24/2026 04:00 PM,10/24/2026 08:00 PM,Underground cable fault,Closed,CRW-09
+N5108,N-03 Lakeview,10/25/2026 06:00 PM,10/26/2026 08:00 AM,Planned maintenance,Closed,CRW-04
+N5109,N-07 Mill Road,10/25/2026 12:00 AM,10/25/2026 02:00 PM,Blown fuse,Closed,CRW-03
+N5110,N-18 Maple Grove,10/25/2026 03:00 PM,10/25/2026 04:00 PM,Blown fuse,Closed,CRW-09
+N5111,N-22 Northgate,10/26/2026 05:00 AM,10/26/2026 02:00 PM,Storm damage,Closed,CRW-01
+N5112,N-18 Maple Grove,10/26/2026 03:00 AM,10/26/2026 09:00 AM,Planned maintenance,Closed,CRW-01
+N5113,N-07 Mill Road,10/27/2026 02:00 PM,10/27/2026 08:00 PM,Storm damage,Closed,CRW-06
+N5114,N-14 Canal Heights,10/27/2026 01:00 PM,10/27/2026 05:00 PM,Tree on line,Closed,CRW-01
+N5115,N-14 Canal Heights,10/27/2026 09:00 AM,10/27/2026 11:00 AM,Pole damaged,Closed,CRW-09
+N5116,N-14 Canal Heights,10/28/2026 12:00 PM,10/28/2026 02:00 PM,Planned maintenance,Closed,CRW-05
+N5117,N-14 Canal Heights,10/29/2026 10:00 AM,10/29/2026 11:00 AM,Storm damage,Closed,CRW-05
+N5118,N-07 Mill Road,10/28/2026 11:00 PM,10/29/2026 02:00 AM,Storm damage,Closed,CRW-04
+N5119,N-11 Old Town,10/29/2026 09:00 AM,10/29/2026 01:00 PM,Storm damage,Closed,CRW-03
+N5120,N-22 Northgate,10/30/2026 12:00 PM,10/30/2026 04:00 PM,Transformer fault,Closed,CRW-02
+N5121,N-14 Canal Heights,10/30/2026 08:00 AM,10/30/2026 05:00 PM,Pole damaged,Closed,CRW-05
+N5122,N-18 Maple Grove,10/31/2026 02:00 AM,10/31/2026 04:00 PM,Pole damaged,Closed,CRW-05
+N5123,N-03 Lakeview,10/31/2026 05:00 AM,10/31/2026 02:00 PM,Blown fuse,Closed,CRW-01
+N5124,N-03 Lakeview,10/31/2026 01:00 AM,10/31/2026 03:00 AM,Underground cable fault,Closed,CRW-07
+N5125,N-07 Mill Road,11/01/2026 07:00 AM,11/01/2026 11:00 AM,Blown fuse,Closed,CRW-02
+N5126,N-14 Canal Heights,11/02/2026 11:00 AM,11/02/2026 12:00 PM,Planned maintenance,Closed,CRW-04
+N5127,N-03 Lakeview,11/02/2026 03:00 AM,11/02/2026 12:00 PM,Pole damaged,Closed,CRW-07
+N5128,N-03 Lakeview,11/02/2026 02:00 PM,11/02/2026 11:00 PM,Blown fuse,Closed,CRW-06
+N5129,N-07 Mill Road,11/03/2026 01:00 PM,11/03/2026 09:00 PM,Storm damage,Open,CRW-02
+N5130,N-14 Canal Heights,11/03/2026 03:00 PM,,Storm damage,Open,

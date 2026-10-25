@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outage Desk · Larkfield Power (fictional)</title>
+<style>
+  :root { --ink:#1d2433; --muted:#667085; --line:#e4e7ec; --brand:#e8590c; --bg:#f7f7f5; --ok:#067647; }
+  * { box-sizing: border-box; }
+  body { margin:0; font: 18px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:#fff; border-bottom:1px solid var(--line); padding:16px 28px; display:flex; align-items:center; gap:12px; }
+  header b { color:var(--brand); }
+  main { max-width:880px; margin:28px auto; padding:0 20px; display:grid; gap:18px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:20px 22px; }
+  label { font-weight:600; display:block; margin-bottom:6px; }
+  input, textarea { width:100%; font:inherit; padding:10px 12px; border:1px solid var(--line); border-radius:8px; }
+  textarea { min-height:70px; }
+  button { font:inherit; font-weight:600; background:var(--brand); color:#fff; border:0; border-radius:8px; padding:10px 18px; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--ink); border:1px solid var(--line); }
+  .answer { font-size:21px; }
+  .sources { color:var(--muted); font-size:15px; margin-top:10px; }
+  .row { display:flex; gap:10px; align-items:center; justify-content:space-between; border-top:1px solid var(--line); padding:10px 0; }
+  .muted { color:var(--muted); }
+</style>
+</head>
+<body>
+<header><b>⚡ Outage Desk</b><span class="muted">Larkfield Power (fictional) · call center</span></header>
+<main>
+  <section class="card">
+    <label for="q">Customer question</label>
+    <input id="q" value="When will power be back for account 4471?">
+    <label for="m" style="margin-top:12px">Customer's message, if they wrote one (optional)</label>
+    <textarea id="m" placeholder="Paste a complaint or web form message"></textarea>
+    <div style="margin-top:12px"><button id="go">Look it up</button> <span id="wait" class="muted"></span></div>
+  </section>
+  <section class="card" id="out" hidden>
+    <div class="answer" id="answer"></div>
+    <div class="sources" id="sources"></div>
+  </section>
+  <section class="card">
+    <label>Waiting for a supervisor</label>
+    <div id="approvals" class="muted">Nothing waiting.</div>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+async function loadApprovals() {
+  const items = await (await fetch('/approvals')).json();
+  $('approvals').innerHTML = items.length ? '' : 'Nothing waiting.';
+  for (const a of items) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<span><b>${a.kind.replace('_', ' ')}</b> · account ${a.account_no} · ${a.reason}</span>`;
+    for (const [text, ok] of [['Approve', true], ['Reject', false]]) {
+      const b = document.createElement('button');
+      b.textContent = text; if (!ok) b.className = 'ghost';
+      b.onclick = async () => {
+        await fetch('/approvals/' + a.id, {method: 'POST', headers: {'content-type': 'application/json'},
+          body: JSON.stringify({approve: ok, supervisor: 'Maria Lopez'})});
+        loadApprovals();
+      };
+      row.appendChild(b);
+    }
+    $('approvals').appendChild(row);
+  }
+}
+$('go').onclick = async () => {
+  $('wait').textContent = 'Checking accounts, outages and the grid…';
+  $('go').disabled = true;
+  try {
+    const r = await fetch('/ask', {method: 'POST', headers: {'content-type': 'application/json'},
+      body: JSON.stringify({question: $('q').value, customer_message: $('m').value})});
+    const d = await r.json();
+    $('answer').textContent = d.answer;
+    $('sources').textContent = 'Sources: ' + d.sources.join(' · ') + `  (${d.seconds} s)`;
+    $('out').hidden = false;
+  } finally {
+    $('wait').textContent = ''; $('go').disabled = false; loadApprovals();
+  }
+};
+loadApprovals();
+</script>
+</body>
+</html>

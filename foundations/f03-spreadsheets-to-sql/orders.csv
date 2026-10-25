@@ -1,0 +1,9 @@
+order_id,customer,city,item,quantity,price_each,order_date
+1001,Ava,Boston,Notebook,3,4,2026-10-01
+1002,Leo,Denver,Pen pack,2,6,2026-10-01
+1003,Zoe,Boston,Backpack,1,45,2026-10-02
+1004,Sam,Austin,Notebook,5,4,2026-10-02
+1005,Ava,Boston,Calculator,1,25,2026-10-03
+1006,Mia,Denver,Backpack,1,45,2026-10-04
+1007,Leo,Denver,Notebook,4,4,2026-10-05
+1008,Zoe,Boston,Pen pack,1,6,2026-10-05

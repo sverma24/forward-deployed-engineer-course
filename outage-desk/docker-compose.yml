@@ -1,0 +1,22 @@
+# Everything the client's server runs (chapter C21). Nothing here talks to the internet.
+services:
+  desk:
+    build: { context: .., dockerfile: outage-desk/Dockerfile }
+    ports: ["8000:8000"]
+    environment:
+      MODEL_BACKEND: ollama
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b}
+      GRID_URL: http://grid:8100
+      GRID_API_KEY: ${GRID_API_KEY:-demo-key-123}
+    depends_on: [grid, ollama]
+  grid:   # stand-in for the client's grid status service
+    build: { context: .., dockerfile: outage-desk/Dockerfile }
+    working_dir: /app
+    command: ["uv", "run", "--no-dev", "uvicorn", "server:app", "--app-dir", "client-handover/grid_api", "--host", "0.0.0.0", "--port", "8100"]
+    environment: { LATENCY: "1", FLAKY: "0.15" }
+  ollama:
+    image: ollama/ollama:0.40.10
+    volumes: ["ollama:/root/.ollama"]
+volumes:
+  ollama:
