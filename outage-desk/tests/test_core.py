@@ -114,3 +114,10 @@ def test_same_suggestion_is_not_queued_twice(tmp_path, monkeypatch):
     assert first["id"] == second["id"]
     assert approvals.decide(first["id"], True, "Maria Lopez")
     assert approvals.pending() == []
+
+
+def test_nested_json_answer_is_unwrapped():
+    from outage_desk.agent import unwrap
+    bad = {"action": "answer", "answer": '{"action": "answer", "answer": "Within 30 days.", "sources": ["p.2"]}'}
+    assert unwrap(bad)["answer"] == "Within 30 days."
+    assert unwrap(bad)["sources"] == ["p.2"]
