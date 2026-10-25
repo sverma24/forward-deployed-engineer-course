@@ -12,6 +12,7 @@ import tempfile
 
 def ask_claude(prompt, system="You are a helpful assistant. Answer briefly.", schema=None, model="haiku"):
     env = {k: os.environ[k] for k in ("HOME", "USER", "LOGNAME", "SHELL", "PATH", "TERM") if k in os.environ}
+    env["ENABLE_TOOL_SEARCH"] = "false"
     cmd = ["claude", "-p", "--model", model, "--tools", "", "--setting-sources", "",
            "--strict-mcp-config", "--no-session-persistence", "--system-prompt", system,
            "--output-format", "json"]

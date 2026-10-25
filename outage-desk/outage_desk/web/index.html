@@ -79,6 +79,7 @@ $('go').onclick = async () => {
   }
 };
 loadApprovals();
+if (location.search.includes('auto')) $('go').click();   // used to record the demo
 </script>
 </body>
 </html>

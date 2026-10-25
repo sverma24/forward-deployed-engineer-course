@@ -6,6 +6,7 @@ The service is slow, rate limited and sometimes down, so this client:
 - sends an Idempotency-Key on every write, so a retry can't create a second ticket
 """
 
+import logging
 import random
 import time
 import uuid
@@ -13,6 +14,8 @@ import uuid
 import httpx
 
 from .config import GRID_API_KEY, GRID_URL
+
+log = logging.getLogger("grid")
 
 
 class GridUnavailable(Exception):
@@ -41,11 +44,14 @@ class GridClient:
                 last = f"HTTP {r.status_code}"
                 retry_after = r.headers.get("Retry-After")
                 if retry_after:
+                    log.warning("%s %s: %s, waiting %s s as the server asked", method, path, last, retry_after)
                     time.sleep(float(retry_after))
                     continue
             if attempt < self.attempts:
                 # 0.5 s, 1 s, 2 s... plus a random bit, so many clients don't retry in lockstep.
-                time.sleep(self.base_delay * 2 ** (attempt - 1) + random.uniform(0, 0.3))
+                wait = self.base_delay * 2 ** (attempt - 1) + random.uniform(0, 0.3)
+                log.warning("%s %s: %s on try %d, retrying in %.1f s", method, path, last, attempt, wait)
+                time.sleep(wait)
         raise GridUnavailable(f"grid service unavailable after {self.attempts} tries ({last})")
 
     def area_status(self, area_code):

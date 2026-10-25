@@ -1,0 +1,9 @@
+meter_id,reading_date,kwh,site
+M-001,2026-10-01,120.5,Warehouse A
+M-002,10/01/2026,98,"Office, Floor 2"
+M-003,2026-10-01,,Warehouse B
+m-001,2026-10-02,118.0,Warehouse A
+M-004,2026-10-02,n/a,Lab
+M-002,2026-10-02,101.25,"Office, Floor 2"
+M-005,2026-13-02,77,Depot
+M-001,2026-10-02,118.0,Warehouse A

@@ -34,3 +34,21 @@ for q, must, must_not in CASES:
     passed += ok
     print(f"{'PASS' if ok else 'FAIL'}  {q:40} -> {answer[:70]}")
 print(f"\nScore: {passed}/{len(CASES)}")
+
+# Read the answers above. Some "passed" but are wrong: the checks only looked for a word.
+# Version 2: ask for a structured answer, and check the exact value.
+print("\n=== Stricter checks: exact answers ===")
+SCHEMA = {"type": "object", "properties": {"answer": {"type": "string"}}, "required": ["answer"]}
+STRICT = [  # (question, exact expected answer)
+    ("Which city is windiest? Reply with just the city.", "london"),
+    ("Is it colder in London or Seattle? Reply with just the colder city.", "seattle"),
+    ("Which city is warmest? Reply with just the city.", "sydney"),
+    ("Is it raining in Sydney? Reply yes or no.", "no"),
+]
+passed = 0
+for q, expected in STRICT:
+    got = ask_claude(q, system=SYSTEM, schema=SCHEMA)["answer"].strip().lower().rstrip(".")
+    ok = got == expected
+    passed += ok
+    print(f"{'PASS' if ok else 'FAIL'}  {q:68} -> {got}")
+print(f"\nStrict score: {passed}/{len(STRICT)}")

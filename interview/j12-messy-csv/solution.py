@@ -1,0 +1,43 @@
+"""One clear solution to J12. Interviewers care more about the reasoning than the cleverness."""
+
+import csv
+from datetime import datetime
+
+
+def parse_date(text):
+    for fmt in ("%Y-%m-%d", "%m/%d/%Y"):
+        try:
+            return datetime.strptime(text.strip(), fmt).date().isoformat()
+        except ValueError:
+            pass
+    return None
+
+
+def clean(path):
+    good, rejected, seen = [], [], set()
+    with open(path, newline="") as f:
+        for n, row in enumerate(csv.DictReader(f), start=2):        # line 1 is the header
+            meter = row["meter_id"].strip().upper()
+            date = parse_date(row["reading_date"])
+            try:
+                kwh = float(row["kwh"])
+            except ValueError:
+                kwh = None
+            if date is None:
+                rejected.append((n, row, "impossible or unknown date"))
+            elif kwh is None:
+                rejected.append((n, row, "missing or non-numeric reading"))
+            elif (meter, date, kwh) in seen:
+                continue                                              # exact duplicate: keep the first
+            else:
+                seen.add((meter, date, kwh))
+                good.append({"meter_id": meter, "date": date, "kwh": kwh, "site": row["site"].strip()})
+    return good, rejected
+
+
+if __name__ == "__main__":
+    good, rejected = clean("meters.csv")
+    for g in good:
+        print("OK      ", g)
+    for n, row, why in rejected:
+        print(f"REJECTED line {n}: {why}: {dict(row)}")
