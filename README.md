@@ -17,7 +17,8 @@ Everything used in the free **Forward Deployed Engineer Full Course** on YouTube
 ## You need
 
 - **Python 3.12+** and **uv** (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
-- **Claude Code**, logged in with a Claude subscription. The project calls it in headless mode (`claude -p`), so you don't need an API key.
+- **SQLite** (`sqlite3`): already on Mac and most Linux machines. On Windows, download the "command-line tools" bundle from sqlite.org and put `sqlite3.exe` on your PATH.
+- **Claude Code**, logged in with a paid Claude plan. The project calls it in headless mode (`claude -p`), so you don't need an API key.
 - Optional, for the offline deploy chapter: **Docker** and **Ollama**
 
 No accounts, keys or paid services beyond that.

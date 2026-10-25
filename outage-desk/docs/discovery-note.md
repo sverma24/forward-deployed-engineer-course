@@ -3,38 +3,40 @@
 *Drafted with Claude Code from the call transcript, then checked and edited by the FDE. Edits are marked ✎.*
 
 ## The problem as stated
-Larkfield wants a website chatbot so customers can check outage information themselves and stop flooding the phone lines during storms.
+Customers keep calling during storms. Rachel asked for a website chatbot so customers can check for themselves instead of phoning.
 
 ## The problem underneath
-The lines jam because each "when will my power come back?" call takes six to seven minutes on a storm day. Agents click between screens while the customer waits. Restore times are also often stale, because crew updates take about an hour to appear. Customers then call back and get a different answer.
+Almost every storm call asks "When will my power come back?" Answering takes three or four lookups: the customer system, two separate outage logs (North and South), and the grid status service or a call to the crew supervisor. A storm-day call takes 6–7 minutes, mostly spent switching screens. Restore estimates also reach agent screens about an hour late. Customers are given stale times and call back. Maria estimates a third of calls or more are callbacks, but this isn't tracked.
+
+The jam comes from slow, inconsistent lookups, not from a lack of self-service. A website bot can follow later on the same engine.
 
 ## Who is affected
-- **Customers:** On last Tuesday's storm, about 4,000 calls were waiting by 6pm. Hold times reached 40 minutes, and some people called back three or four times.
-- **Call center agents:** Each question needs three or four lookups across the customer system, two outage logs (North and South) and the grid status service. Sometimes they also call a crew supervisor.
-- **Customers on medical equipment:** They get priority and a supervisor call.
+- Customers, who face 40-minute holds and repeat calls
+- Call center agents and Maria's team
+- Rachel, who needs to explain the change to the board
 - ✎ **Field crews:** they set the restore estimates. If an estimate is wrong at the source, no tool can fix it.
 - ✎ **Daniel's IT team:** they own the grid status service and the data exports, so they unblock access.
 
 ## What success looks like
-- Storm-day "when will it come back" calls drop from about 7 minutes to 3.
-- Fewer repeat callers. Maria estimates roughly a third or more of Tuesday's calls were callbacks, but this isn't tracked, so there is no target yet.
-- Agents get a current answer in a few seconds.
-- A website bot can follow later, built on the same engine.
+- Storm-day calls drop from about 7 minutes to 3
+- Fewer callbacks (no target set yet)
+- For scale, Tuesday had 400+ calls waiting at once and about 4,000 over the evening
 
 ## Constraints
-- Customer data stays on Larkfield's servers (regulator and security requirement).
-- The grid status service is rate-limited and fails under load.
-- Nothing is written back to Larkfield systems without human approval. That means no automatic compensation and no ticket closing.
-- Medical-equipment customers must never be missed.
+- Customer data stays on Larkfield servers (regulator and security rule)
+- The grid status service is rate-limited and fails under load
+- Nothing is written back without human approval (no automatic compensation, no closing tickets)
+- Medical-equipment customers get priority and a supervisor call, and none can be missed
 
 ## ✎ What we do first
 1. Measure before building. Count repeat calls (same account, within 2 hours) from the phone system for the last three storms. That gives us a baseline to beat.
 2. Agree the change of scope in writing: agent tool first, website bot later, same engine.
 
 ## Open questions
-- What is the target for callbacks, and how will we measure them?
-- How do we identify medical-equipment customers, and where is that data held?
-- What are the grid service's rate limits?
-- Can the North and South logs be read together?
-- How will the board be told that the project has moved from a "chatbot" to an agent-facing tool first?
+- What callback reduction counts as success? What is the real baseline?
+- How are medical-equipment customers flagged today, and in which system?
+- What is the grid status service's rate limit?
+- Can the North and South logs be queried together?
+- How can crew estimate updates reach us faster than the current hour?
+- What timeline or board milestone should we plan around?
 - ✎ **Decision needed from Rachel by Monday:** do we go ahead with the agent tool first?

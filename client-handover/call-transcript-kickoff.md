@@ -12,7 +12,7 @@
 
 **FDE:** That makes sense. Before we talk about the chatbot, can you walk me through what happened last Tuesday evening?
 
-**Rachel:** The storm hit around four. By six we had something like four thousand calls waiting. People were on hold for forty minutes, and some gave up and called back three or four times.
+**Rachel:** The storm hit around four. By six we had more than four hundred calls waiting at once, and about four thousand over the evening. People were on hold for forty minutes, and some gave up and called back three or four times.
 
 **FDE:** When a customer does get through, what do they usually ask?
 
