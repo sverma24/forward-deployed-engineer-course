@@ -1,0 +1,7 @@
+.venv
+**/__pycache__
+.pytest_cache
+outage-desk/data/*.db
+outage-desk/data/traces.jsonl
+outage-desk/evals/results
+.git
