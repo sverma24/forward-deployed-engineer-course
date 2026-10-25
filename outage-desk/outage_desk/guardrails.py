@@ -18,7 +18,7 @@ INJECTION_HINTS = [
 ]
 
 # The only tools the agent may call on its own. All of them read; none of them write.
-READ_ONLY_TOOLS = {"lookup_account", "get_outage_status", "search_policies", "propose_action"}
+READ_ONLY_TOOLS = {"lookup_account", "find_area", "get_outage_status", "search_policies", "propose_action"}
 
 
 def mask_pii(text):

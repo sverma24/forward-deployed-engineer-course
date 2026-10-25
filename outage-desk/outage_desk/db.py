@@ -44,3 +44,11 @@ def recent_outages(area_code, limit=5):
             "SELECT outage_id, started_at, restore_eta, cause, status FROM outages "
             "WHERE area_code = ? ORDER BY started_at DESC LIMIT ?", (area_code, limit)).fetchall()
     return [dict(zip(("outage_id", "started_at", "restore_eta", "cause", "status"), r)) for r in rows]
+
+
+def find_area(name):
+    """Area codes whose name matches, for questions like "Riverside" or "Mill Road"."""
+    with connect() as db:
+        rows = db.execute("SELECT area_code, area_name, division FROM areas WHERE lower(area_name) LIKE ? "
+                          "ORDER BY area_code", (f"%{name.strip().lower()}%",)).fetchall()
+    return [dict(zip(("area_code", "area_name", "division"), r)) for r in rows]

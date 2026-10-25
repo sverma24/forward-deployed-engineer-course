@@ -27,6 +27,11 @@ def lookup_account(account_no):
     return {"found": True, **acc, "source": f"accounts table, account {acc['account_no']}"}
 
 
+def find_area(name):
+    matches = db.find_area(name)
+    return {"matches": matches, "source": "areas table" if matches else f"areas table (no area called {name})"}
+
+
 def get_outage_status(area_code):
     logged = db.open_outage(area_code)
     result = {"area_code": area_code, "outage_log": logged,
@@ -55,6 +60,7 @@ def propose_action(kind, account_no, reason):
 TOOLS = {
     "lookup_account": (lookup_account, "Find a customer by account number. Returns name, area code, "
                        "area name and whether they are on medical priority.", {"account_no": "string"}),
+    "find_area": (find_area, "Find the area code for an area name, like Riverside or Mill Road.", {"name": "string"}),
     "get_outage_status": (get_outage_status, "Get the current outage for an area code like S-07: the outage "
                           "log entry plus the live grid status, which has the freshest restore time.",
                           {"area_code": "string"}),
