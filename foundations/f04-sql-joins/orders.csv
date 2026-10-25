@@ -1,0 +1,10 @@
+order_id,customer_id,item,quantity,price_each
+1001,1,Notebook,3,4
+1002,2,Pen pack,2,6
+1003,3,Backpack,1,45
+1004,4,Notebook,5,4
+1005,1,Calculator,1,25
+1006,9,Backpack,1,45
+1007,2,Notebook,4,4
+1007,2,Notebook,4,4
+1008,5,Pen pack,1,6

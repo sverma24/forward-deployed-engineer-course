@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "weather": {
+      "command": "uv",
+      "args": ["run", "python", "foundations/f17-mcp/weather_mcp.py"]
+    }
+  }
+}

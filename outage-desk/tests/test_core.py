@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from outage_desk import approvals, clean, db, guardrails
-from outage_desk.grid import GridClient, GridUnavailable, parse_eta
+from outage_desk.grid import GridClient, GridUnavailable
 
 
 # --- cleaning (C6) -------------------------------------------------------
@@ -41,7 +41,7 @@ def test_account_with_leading_zero_is_found():
     assert db.find_account("04471")["area_code"] == "S-07"
 
 
-# --- grid client (C12, C24) ----------------------------------------------
+# --- grid client (C12) ----------------------------------------------
 
 def make_client(handler):
     c = GridClient(attempts=3, base_delay=0)
@@ -88,13 +88,6 @@ def test_writes_carry_an_idempotency_key():
 
     make_client(handler).create_crew_ticket("S-02", "no crew yet", idempotency_key="outage-S-T906")
     assert seen["key"] == "outage-S-T906"
-
-
-def test_eta_in_old_and_new_format():
-    assert parse_eta({"restore_eta": "2026-11-03T19:45:00-05:00"}) == "2026-11-03T19:45:00-05:00"
-    assert parse_eta({"eta_epoch_ms": 1793753100000}) == "2026-11-03T19:45:00-05:00"
-    with pytest.raises(ValueError):
-        parse_eta({"eta": "soon"})
 
 
 # --- guardrails and approvals (C13–C15) ----------------------------------
