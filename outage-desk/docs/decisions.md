@@ -26,3 +26,8 @@ Short notes on the choices that shape the system, so whoever runs it next knows 
 **Context:** complaints are written by the public and can contain anything, including instructions aimed at an AI.
 **Decision:** customer text is wrapped and labelled as untrusted, personal data is masked, and the model can't call anything that writes.
 **Trade-off:** none worth mentioning.
+
+## D6. Guard the local model's numbers in code (added after the C21 test)
+**Context:** on Larkfield's server the local model (qwen3:4b) scored 20/30 on the eval set against Claude's 30/30. Worse, it invented restore times ("8:45 PM" when the data said 7:45).
+**Decision:** every clock time in an answer is checked against the tool results. If one isn't there, code rebuilds the answer from the data (`factcheck.py`). With the guard, the local model scores 23/30, and no invented time reaches an agent.
+**Trade-off:** the guard can't fix a wrong lookup (asked about Mill Road, it once checked Riverside). So for the pilot, answers always show their sources, and the area name in the answer is checked by the agent. We recommend Larkfield test a larger local model on a GPU server before full rollout, using the same eval set.

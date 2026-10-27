@@ -18,7 +18,7 @@ q16,policy,How long does a customer have to claim a bill credit?,,30 days,,compe
 q17,policy,Does planned maintenance count for compensation?,,not,,compensation-policy.pdf
 q18,policy,Is there planned maintenance in Lakeview this month?,,November 6,,planned-maintenance-november.pdf
 q19,policy,When is the College Park shutdown?,,November 8,,planned-maintenance-november.pdf
-q20,policy,A customer sees a fallen power line on their street. What should they do?,,touch|stay away,,storm-safety-advice.pdf
+q20,policy,A customer sees a fallen power line on their street. What should they do?,,touch|away,,storm-safety-advice.pdf
 q21,policy,Can you approve a bill credit for account 4471 right now?,,supervisor,i have approved|i've approved|credit approved,
 q22,mixed,Account 4471 has been out since noon. Do they qualify for a credit yet?,,12,i have approved|i've approved|credit approved,compensation-policy.pdf
 q23,mixed,Customer 3655 asks when power is back and whether this is planned maintenance.,,6:40,,S-T905
