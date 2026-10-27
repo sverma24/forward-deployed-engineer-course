@@ -13,7 +13,7 @@ import sys
 import time
 import uuid
 
-from . import guardrails, model
+from . import factcheck, guardrails, model
 from .config import DATA_DIR, TRACE_LOG, now
 from .tools import TOOLS, describe
 
@@ -86,7 +86,8 @@ def ask(question, context="", backend=None, trace=True):
             decision = unwrap(model.decide(system, transcript, backend=backend))
         steps.append({"turn": turn, "decision": decision})
         if decision.get("action") == "answer":
-            result = {"answer": decision.get("answer", ""), "sources": decision.get("sources", []),
+            answer, unknown = factcheck.check(decision.get("answer", ""), steps, also_allowed=[now().isoformat()])
+            result = {"answer": answer, "sources": decision.get("sources", []), "times_not_in_data": unknown,
                       "turns": turn, "seconds": round(time.time() - started, 1), "steps": steps}
             break
         results = []

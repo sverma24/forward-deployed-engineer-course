@@ -121,3 +121,16 @@ def test_nested_json_answer_is_unwrapped():
     bad = {"action": "answer", "answer": '{"action": "answer", "answer": "Within 30 days.", "sources": ["p.2"]}'}
     assert unwrap(bad)["answer"] == "Within 30 days."
     assert unwrap(bad)["sources"] == ["p.2"]
+
+
+# --- fact check (C21) ----------------------------------------------------
+
+def test_invented_time_is_replaced_by_data():
+    from outage_desk import factcheck
+    steps = [{"results": [{"tool": "get_outage_status", "result": {
+        "area_code": "S-07", "outage_log": {"outage_id": "S-T904", "restore_eta": "2026-11-03T20:30:00-05:00"},
+        "live_status": {"restore_eta": "2026-11-03T19:45:00-05:00", "updated_at": "2026-11-03T17:52:00-05:00"}}}]}]
+    answer, unknown = factcheck.check("Power is expected back by 8:45 PM.", steps)
+    assert unknown == ["8:45"]
+    assert "7:45 PM" in answer and "8:45" not in answer
+    assert factcheck.check("Back at 7:45 PM, updated 5:52 PM.", steps) == ("Back at 7:45 PM, updated 5:52 PM.", [])
