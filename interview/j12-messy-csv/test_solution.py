@@ -19,5 +19,5 @@ def test_duplicate_kept_once():
 
 def test_bad_rows_rejected_with_reasons():
     reasons = sorted(r[2] for r in rejected)
-    assert reasons == ["impossible or unknown date", "missing or non-numeric reading",
-                       "missing or non-numeric reading"]
+    assert reasons == ["exact duplicate of an earlier row (first one kept)", "impossible or unknown date",
+                       "missing or non-numeric reading", "missing or non-numeric reading"]
