@@ -4,16 +4,19 @@ The service is slow, rate limited and sometimes down, so this client:
 - retries 429 and 5xx with exponential backoff plus jitter, honouring Retry-After
 - gives up after a few tries and says so clearly, instead of hanging or guessing
 - sends an Idempotency-Key on every write, so a retry can't create a second ticket
+- reads the restore time in either the old or the new response format, and fails loudly
+  on anything else (the C24 incident)
 """
 
 import logging
 import random
 import time
 import uuid
+from datetime import datetime
 
 import httpx
 
-from .config import GRID_API_KEY, GRID_URL
+from .config import EST, GRID_API_KEY, GRID_URL
 
 log = logging.getLogger("grid")
 
@@ -70,4 +73,11 @@ class GridClient:
 
 
 def parse_eta(data):
-    return data.get("restore_eta")
+    """The vendor renamed restore_eta to eta_epoch_ms without warning (incident, week 3).
+    Accept both, and fail loudly on anything else instead of quietly returning nothing."""
+    if "restore_eta" in data:
+        return data["restore_eta"]
+    if "eta_epoch_ms" in data:
+        ms = data["eta_epoch_ms"]
+        return None if ms is None else datetime.fromtimestamp(ms / 1000, EST).isoformat()
+    raise ValueError(f"grid response has no restore time field: {sorted(data)}")

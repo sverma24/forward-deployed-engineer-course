@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from outage_desk import approvals, clean, db, guardrails
-from outage_desk.grid import GridClient, GridUnavailable
+from outage_desk.grid import GridClient, GridUnavailable, parse_eta
 
 
 # --- cleaning (C6) -------------------------------------------------------
@@ -134,3 +134,15 @@ def test_invented_time_is_replaced_by_data():
     assert unknown == ["8:45"]
     assert "7:45 PM" in answer and "8:45" not in answer
     assert factcheck.check("Back at 7:45 PM, updated 5:52 PM.", steps) == ("Back at 7:45 PM, updated 5:52 PM.", [])
+
+
+# --- the week 3 incident (C24): the vendor renamed restore_eta ------------
+
+def test_eta_in_old_and_new_format():
+    assert parse_eta({"restore_eta": "2026-11-03T19:45:00-05:00"}) == "2026-11-03T19:45:00-05:00"
+    assert parse_eta({"eta_epoch_ms": 1793753100000}) == "2026-11-03T19:45:00-05:00"
+
+
+def test_unknown_eta_format_fails_loudly():
+    with pytest.raises(ValueError):
+        parse_eta({"eta": "soon"})

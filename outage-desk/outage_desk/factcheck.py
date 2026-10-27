@@ -44,6 +44,9 @@ def answer_from_data(steps):
             if live and live.get("restore_eta"):
                 return (f"Area {out['area_code']}: power is expected back at {_clock(live['restore_eta'])} "
                         f"(live grid status, updated {_clock(live['updated_at'])}).")
+            if live and live.get("state") == "outage" and not live.get("restore_eta"):
+                return (f"Area {out['area_code']}: outage confirmed by the live grid status "
+                        f"(updated {_clock(live['updated_at'])}), with no restore estimate yet.")
             if live and live.get("state") == "normal" and not log:
                 return f"Area {out['area_code']}: no outage on record, and the grid shows the area as normal."
             if log and log.get("restore_eta"):

@@ -53,6 +53,11 @@ def get_outage_status(area_code):
         # Say plainly that the live check failed, so nobody quotes a stale time as current.
         result["live_status"] = None
         result["live_error"] = str(e)
+    except ValueError as e:
+        # The service answered, but in a shape we don't understand (the week 3 incident). That's an
+        # error too, and it must show up in the answer and the monitor, not quietly turn into "no time".
+        result["live_status"] = None
+        result["live_error"] = f"grid response format changed: {e}"
     return result
 
 
