@@ -20,3 +20,4 @@ curl localhost:8000/health                                               # quick
 ## Daily (5 minutes)
 - Run `python -m outage_desk.monitor` and read any alerts.
 - Spot-check 20 answers from the trace log against the source systems.
+- Compare 5 restore times with the grid vendor's own screen (added after postmortem 001).

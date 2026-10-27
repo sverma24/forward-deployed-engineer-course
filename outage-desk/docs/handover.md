@@ -24,7 +24,7 @@
 ## Training done
 - 60-minute session for all agents: how to read the sources, what "live status unavailable" means, when to escalate
 - 30-minute session for supervisors: the approvals queue
-- 90-minute session for IT: runbook, evals, updating the policy index, the incident from week 3
+- 90-minute session for IT: runbook, evals, updating the policy index, and postmortem 001 (the week 3 incident)
 
 ## Known limits
 - Restore times are only as good as crews' estimates.
