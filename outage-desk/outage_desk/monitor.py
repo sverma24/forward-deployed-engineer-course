@@ -12,6 +12,7 @@ from collections import Counter
 from .config import TRACE_LOG
 
 # Alert when these are crossed. Agree the numbers with the client in the runbook.
+RECENT = 5                 # the last 5 answers that needed live grid data
 SLOW_SECONDS = 30          # an agent waiting longer than this will give up and click through screens
 FALLBACK_RATE = 0.2        # more than 1 in 5 answers without live grid data means the grid service is in trouble
 
@@ -36,17 +37,25 @@ def main():
     fallbacks = sum(1 for t in traces if t.get("live_errors"))
     unanswered = sum(1 for t in traces if not t.get("sources"))
     tools = Counter(tool for t in traces for tool in t.get("tools", []))
+    # Averages over a whole shift hide an outage that started an hour ago, so also look at the most recent
+    # answers that actually needed live data.
+    needed_live = [t for t in traces if "get_outage_status" in t.get("tools", [])]
+    recent = needed_live[-RECENT:]
+    recent_failed = sum(1 for t in recent if t.get("live_errors"))
 
     print(f"Answers:            {len(traces)}")
     print(f"Time per answer:    median {pct(secs, .5):.1f} s · 95th percentile {pct(secs, .95):.1f} s · slowest {max(secs):.1f} s")
     print(f"Live grid missing:  {fallbacks} ({fallbacks / len(traces):.0%}) answers fell back to the outage log")
+    print(f"Recent live checks: {recent_failed} of the last {len(recent)} answers that needed live data didn't get it")
     print(f"No sources:         {unanswered} answers had no source at all")
     print(f"Tools used:         " + ", ".join(f"{k} {v}" for k, v in tools.most_common()))
 
     alerts = []
     if pct(secs, .95) > SLOW_SECONDS:
         alerts.append(f"SLOW: 1 in 20 answers takes over {pct(secs, .95):.0f} s (limit {SLOW_SECONDS} s)")
-    if fallbacks / len(traces) > FALLBACK_RATE:
+    if recent and recent_failed / len(recent) > FALLBACK_RATE:
+        alerts.append(f"GRID NOW: {recent_failed} of the last {len(recent)} live checks failed; the grid service may be down")
+    elif fallbacks / len(traces) > FALLBACK_RATE:
         alerts.append(f"GRID: {fallbacks / len(traces):.0%} of answers had no live data (limit {FALLBACK_RATE:.0%})")
     if unanswered:
         alerts.append(f"QUALITY: {unanswered} answers with no source; read them")
