@@ -11,6 +11,7 @@ Local model:  MODEL_BACKEND=ollama uv run python evals/run_evals.py
 """
 
 import csv
+import os
 import sys
 import time
 from collections import defaultdict
@@ -62,7 +63,8 @@ def main():
     if only:
         questions = [q for q in questions if q["id"] in only]
     started = time.time()
-    with ThreadPoolExecutor(max_workers=4) as pool:      # a few at a time, to stay polite to the model
+    workers = int(os.environ.get("EVAL_WORKERS", "4"))
+    with ThreadPoolExecutor(max_workers=workers) as pool:      # a few at a time, to stay polite to the model
         results = list(pool.map(run_one, questions))
 
     by_cat = defaultdict(lambda: [0, 0])
