@@ -1,0 +1,46 @@
+From 95dedd568527c5870a94864ce6cf75f9fe4165dd Mon Sep 17 00:00:00 2001
+From: Saurav Verma <sauravverma.genai@gmail.com>
+Date: Tue, 27 Oct 2026 22:35:28 +0530
+Subject: [PATCH] C15 exercise: rejections need a reason
+
+---
+ outage-desk/outage_desk/approvals.py |  4 +++-
+ outage-desk/tests/test_core.py       | 10 ++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/outage-desk/outage_desk/approvals.py b/outage-desk/outage_desk/approvals.py
+index f2cce88..0a82e88 100644
+--- a/outage-desk/outage_desk/approvals.py
++++ b/outage-desk/outage_desk/approvals.py
+@@ -43,7 +43,9 @@ def pending():
+     return [dict(zip(("id", "kind", "account_no", "reason", "created_at"), r)) for r in rows]
+ 
+ 
+-def decide(aid, approve, supervisor):
++def decide(aid, approve, supervisor, note=""):
++    if not approve and not note.strip():
++        raise ValueError("a rejection needs a reason, so the agent can tell the customer why")
+     with _db() as db:
+         n = db.execute("UPDATE approvals SET status = ?, decided_by = ?, decided_at = ? "
+                        "WHERE id = ? AND status = 'pending'",
+diff --git a/outage-desk/tests/test_core.py b/outage-desk/tests/test_core.py
+index 8a4f46c..8c91459 100644
+--- a/outage-desk/tests/test_core.py
++++ b/outage-desk/tests/test_core.py
+@@ -146,3 +146,13 @@ def test_eta_in_old_and_new_format():
+ def test_unknown_eta_format_fails_loudly():
+     with pytest.raises(ValueError):
+         parse_eta({"eta": "soon"})
++
++
++# --- exercise C15 ---------------------------------------------------------
++
++def test_rejecting_needs_a_reason(tmp_path, monkeypatch):
++    monkeypatch.setattr(approvals, "APPROVALS_DB", tmp_path / "a.db")
++    aid = approvals.propose("bill_credit", "4471", "outage over 12 hours")["id"]
++    with pytest.raises(ValueError):
++        approvals.decide(aid, False, "Maria Lopez")
++    assert approvals.decide(aid, False, "Maria Lopez", note="outage was planned maintenance")
+-- 
+2.54.0 (Apple Git-157)
+

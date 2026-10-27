@@ -1,0 +1,26 @@
+From efea4494a064f36de7c3032fec5caaab8c28170d Mon Sep 17 00:00:00 2001
+From: Saurav Verma <sauravverma.genai@gmail.com>
+Date: Tue, 27 Oct 2026 22:35:31 +0530
+Subject: [PATCH] C23 exercise: alert on recent slow answers
+
+---
+ outage-desk/outage_desk/monitor.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/outage-desk/outage_desk/monitor.py b/outage-desk/outage_desk/monitor.py
+index 438991d..fd82da1 100644
+--- a/outage-desk/outage_desk/monitor.py
++++ b/outage-desk/outage_desk/monitor.py
+@@ -51,6 +51,9 @@ def main():
+     print(f"Tools used:         " + ", ".join(f"{k} {v}" for k, v in tools.most_common()))
+ 
+     alerts = []
++    last = secs[-RECENT:]
++    if sum(last) / len(last) > SLOW_SECONDS:
++        alerts.append(f"SLOW NOW: the last {len(last)} answers averaged {sum(last) / len(last):.0f} s")
+     if pct(secs, .95) > SLOW_SECONDS:
+         alerts.append(f"SLOW: 1 in 20 answers takes over {pct(secs, .95):.0f} s (limit {SLOW_SECONDS} s)")
+     if recent and recent_failed / len(recent) > FALLBACK_RATE:
+-- 
+2.54.0 (Apple Git-157)
+

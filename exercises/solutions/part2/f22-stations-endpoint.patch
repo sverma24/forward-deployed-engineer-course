@@ -1,0 +1,32 @@
+diff --git a/foundations/f22-coding-agent/status_api.py b/foundations/f22-coding-agent/status_api.py
+index b82b062..c32bbaf 100644
+--- a/foundations/f22-coding-agent/status_api.py
++++ b/foundations/f22-coding-agent/status_api.py
+@@ -18,6 +18,11 @@ STATIONS = {
+ }
+ 
+ 
++@app.get("/stations")
++def stations():
++    return {"stations": sorted(STATIONS)}
++
++
+ @app.get("/stations/{name}")
+ def station(name: str):
+     if name.lower() not in STATIONS:
+diff --git a/foundations/f22-coding-agent/test_status_api.py b/foundations/f22-coding-agent/test_status_api.py
+index 2fba6fa..90aa774 100644
+--- a/foundations/f22-coding-agent/test_status_api.py
++++ b/foundations/f22-coding-agent/test_status_api.py
+@@ -9,5 +9,11 @@ def test_known_station():
+     assert client.get("/stations/seattle").json()["city"] == "Seattle"
+ 
+ 
++def test_lists_station_names_sorted():
++    response = client.get("/stations")
++    assert response.status_code == 200
++    assert response.json() == {"stations": ["london", "seattle", "sydney"]}
++
++
+ def test_unknown_station_is_404():
+     assert client.get("/stations/atlantis").status_code == 404

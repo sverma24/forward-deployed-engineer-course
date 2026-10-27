@@ -12,6 +12,8 @@ Everything used in the free **Forward Deployed Engineer Full Course** on YouTube
 | `client-handover/` | what the client hands you on day one: messy exports, policy PDFs, a call transcript, and a stand-in for their grid status service | Part 3 |
 | `outage-desk/` | the system we build for them: cleaning, a read-only database, an agent with tools, document search, an MCP server, guardrails, human sign-off, evals, Docker | Part 3 |
 | `outage-desk/docs/` | the non-code deliverables: discovery note, scope, decisions, change request, runbook, postmortem, handover | Part 3 |
+| `exercises/` | the "Your turn" task from every chapter, with model answers; code answers are runnable files and patches in `exercises/solutions/` | all parts |
+| `interview/` | the two coding rounds, with problems, solutions and tests | Part 4 |
 | `tools/` | scripts that generate the synthetic client data | |
 
 ## You need

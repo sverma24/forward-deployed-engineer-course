@@ -1,0 +1,52 @@
+From ebb5912c020831f00f9c5d0ff3d7a906e3457173 Mon Sep 17 00:00:00 2001
+From: Saurav Verma <sauravverma.genai@gmail.com>
+Date: Tue, 27 Oct 2026 22:35:25 +0530
+Subject: [PATCH] C8 exercise: outage_history tool
+
+---
+ outage-desk/outage_desk/guardrails.py | 2 +-
+ outage-desk/outage_desk/tools.py      | 8 ++++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/outage-desk/outage_desk/guardrails.py b/outage-desk/outage_desk/guardrails.py
+index 8550047..e90c6a3 100644
+--- a/outage-desk/outage_desk/guardrails.py
++++ b/outage-desk/outage_desk/guardrails.py
+@@ -18,7 +18,7 @@ INJECTION_HINTS = [
+ ]
+ 
+ # The only tools the agent may call on its own. All of them read; none of them write.
+-READ_ONLY_TOOLS = {"lookup_account", "find_area", "get_outage_status", "search_policies", "propose_action"}
++READ_ONLY_TOOLS = {"lookup_account", "find_area", "get_outage_status", "outage_history", "search_policies", "propose_action"}
+ 
+ 
+ def mask_pii(text):
+diff --git a/outage-desk/outage_desk/tools.py b/outage-desk/outage_desk/tools.py
+index 3ea3059..806e916 100644
+--- a/outage-desk/outage_desk/tools.py
++++ b/outage-desk/outage_desk/tools.py
+@@ -61,6 +61,12 @@ def get_outage_status(area_code):
+     return result
+ 
+ 
++def outage_history(area_code, limit=10):
++    rows = db.recent_outages(area_code, limit)
++    return {"area_code": area_code, "outages": rows,
++            "source": f"outage log, last {len(rows)} outages in {area_code}"}
++
++
+ def search_policies(query):
+     hits = docs.search(query)
+     return {"results": [{"doc": h["doc"], "page": h["page"], "text": h["text"]} for h in hits],
+@@ -78,6 +84,8 @@ TOOLS = {
+     "get_outage_status": (get_outage_status, "Get the current outage for an area code like S-07: the outage "
+                           "log entry plus the live grid status, which has the freshest restore time.",
+                           {"area_code": "string"}),
++    "outage_history": (outage_history, "The most recent outages in an area, newest first, open and closed. "
++                       "Use it for questions about how often an area loses power.", {"area_code": "string"}),
+     "search_policies": (search_policies, "Search Larkfield's policy documents (compensation, planned "
+                         "maintenance, storm safety). Returns matching pages with document and page number.",
+                         {"query": "string"}),
+-- 
+2.54.0 (Apple Git-157)
+

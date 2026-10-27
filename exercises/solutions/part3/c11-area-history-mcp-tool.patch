@@ -1,0 +1,36 @@
+From e3a5a8782233bd4354ffc318bb4d67b133758e77 Mon Sep 17 00:00:00 2001
+From: Saurav Verma <sauravverma.genai@gmail.com>
+Date: Tue, 27 Oct 2026 22:35:26 +0530
+Subject: [PATCH] C11 exercise: area_history MCP tool
+
+---
+ outage-desk/outage_desk/mcp_server.py | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/outage-desk/outage_desk/mcp_server.py b/outage-desk/outage_desk/mcp_server.py
+index 87e545d..6c6cdfe 100644
+--- a/outage-desk/outage_desk/mcp_server.py
++++ b/outage-desk/outage_desk/mcp_server.py
+@@ -10,6 +10,7 @@ Register it with Claude Code from the outage-desk folder:
+ 
+ from mcp.server.mcpserver import MCPServer
+ 
++from . import db
+ from .grid import GridClient, GridUnavailable
+ 
+ server = MCPServer("larkfield-grid")
+@@ -36,5 +37,11 @@ def create_crew_ticket(area_code: str, note: str, request_id: str) -> dict:
+         return {"error": str(e), "retryable": True}
+ 
+ 
++@server.tool()
++def area_history(area_code: str) -> list[dict]:
++    """The last ten outages in an area code, newest first, from Larkfield's outage log."""
++    return db.recent_outages(area_code.upper(), 10)
++
++
+ if __name__ == "__main__":
+     server.run()
+-- 
+2.54.0 (Apple Git-157)
+

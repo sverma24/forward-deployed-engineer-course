@@ -1,0 +1,30 @@
+From ec468e00d8c661ec5ab02a3109e21f9664ce4191 Mon Sep 17 00:00:00 2001
+From: Saurav Verma <sauravverma.genai@gmail.com>
+Date: Tue, 27 Oct 2026 22:35:19 +0530
+Subject: [PATCH] C6 exercise: duplicate ticket test
+
+---
+ outage-desk/tests/test_core.py | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/outage-desk/tests/test_core.py b/outage-desk/tests/test_core.py
+index 8a4f46c..c3424c1 100644
+--- a/outage-desk/tests/test_core.py
++++ b/outage-desk/tests/test_core.py
+@@ -146,3 +146,13 @@ def test_eta_in_old_and_new_format():
+ def test_unknown_eta_format_fails_loudly():
+     with pytest.raises(ValueError):
+         parse_eta({"eta": "soon"})
++
++
++# --- exercise C6 ----------------------------------------------------------
++
++def test_ticket_entered_twice_becomes_one_outage():
++    row = {"ticket_no": "S-T904", "feeder_area": "S-07", "began_at": "2026-11-03T12:00:00-05:00",
++           "restore_eta": "2026-11-03T20:30:00-05:00", "reason": "storm damage", "state": "ACTIVE", "crew_id": "CRW-14"}
++    outages, _ = clean.clean_outages([], [row, dict(row)])
++    assert len(outages) == 1
++    assert outages[0][6] == "open"
+-- 
+2.54.0 (Apple Git-157)
+

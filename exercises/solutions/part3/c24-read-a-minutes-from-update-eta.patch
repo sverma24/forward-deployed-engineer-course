@@ -1,0 +1,49 @@
+From 38a9896a7dbc9ca8da77f7fb71a4682706bdbe26 Mon Sep 17 00:00:00 2001
+From: Saurav Verma <sauravverma.genai@gmail.com>
+Date: Tue, 27 Oct 2026 22:35:34 +0530
+Subject: [PATCH] C24 exercise: read a minutes-from-update ETA
+
+---
+ outage-desk/outage_desk/grid.py | 7 ++++++-
+ outage-desk/tests/test_core.py  | 5 +++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/outage-desk/outage_desk/grid.py b/outage-desk/outage_desk/grid.py
+index fd4073c..316d005 100644
+--- a/outage-desk/outage_desk/grid.py
++++ b/outage-desk/outage_desk/grid.py
+@@ -12,7 +12,7 @@ import logging
+ import random
+ import time
+ import uuid
+-from datetime import datetime
++from datetime import datetime, timedelta
+ 
+ import httpx
+ 
+@@ -80,4 +80,9 @@ def parse_eta(data):
+     if "eta_epoch_ms" in data:
+         ms = data["eta_epoch_ms"]
+         return None if ms is None else datetime.fromtimestamp(ms / 1000, EST).isoformat()
++    if "eta_minutes" in data:
++        # Announced for v3: minutes from the moment the status was updated.
++        mins = data["eta_minutes"]
++        updated = datetime.fromisoformat(data["updated_at"])
++        return None if mins is None else (updated + timedelta(minutes=mins)).isoformat()
+     raise ValueError(f"grid response has no restore time field: {sorted(data)}")
+diff --git a/outage-desk/tests/test_core.py b/outage-desk/tests/test_core.py
+index 8a4f46c..1290062 100644
+--- a/outage-desk/tests/test_core.py
++++ b/outage-desk/tests/test_core.py
+@@ -146,3 +146,8 @@ def test_eta_in_old_and_new_format():
+ def test_unknown_eta_format_fails_loudly():
+     with pytest.raises(ValueError):
+         parse_eta({"eta": "soon"})
++
++
++def test_eta_in_minutes_from_update():
++    data = {"eta_minutes": 108, "updated_at": "2026-11-03T17:57:00-05:00"}
++    assert parse_eta(data) == "2026-11-03T19:45:00-05:00"
+-- 
+2.54.0 (Apple Git-157)
+

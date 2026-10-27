@@ -1,0 +1,48 @@
+From 0161ab0972536859acff53f0aa42114eb7d12d64 Mon Sep 17 00:00:00 2001
+From: Saurav Verma <sauravverma.genai@gmail.com>
+Date: Tue, 27 Oct 2026 22:35:24 +0530
+Subject: [PATCH] C13 exercise: mask street addresses
+
+---
+ outage-desk/outage_desk/guardrails.py | 2 ++
+ outage-desk/tests/test_core.py        | 7 +++++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/outage-desk/outage_desk/guardrails.py b/outage-desk/outage_desk/guardrails.py
+index 8550047..8e51d3a 100644
+--- a/outage-desk/outage_desk/guardrails.py
++++ b/outage-desk/outage_desk/guardrails.py
+@@ -10,6 +10,7 @@ import re
+ 
+ PHONE = re.compile(r"\(?\b\d{3}\)?[ .-]?\d{3}-\d{4}\b")
+ EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.]+\b")
++ADDRESS = re.compile(r"\b\d{1,5} [A-Z][a-z]+(?: [A-Z][a-z]+)* (?:St|Street|Ave|Avenue|Rd|Road|Ct|Court|Dr|Drive|Ln|Lane)\b")
+ 
+ # Phrases that show up when someone tries to give orders to an AI through data.
+ INJECTION_HINTS = [
+@@ -23,6 +24,7 @@ READ_ONLY_TOOLS = {"lookup_account", "find_area", "get_outage_status", "search_p
+ 
+ def mask_pii(text):
+     text = PHONE.sub("[phone]", text)
++    text = ADDRESS.sub("[address]", text)
+     return EMAIL.sub("[email]", text)
+ 
+ 
+diff --git a/outage-desk/tests/test_core.py b/outage-desk/tests/test_core.py
+index 8a4f46c..7be9aa8 100644
+--- a/outage-desk/tests/test_core.py
++++ b/outage-desk/tests/test_core.py
+@@ -146,3 +146,10 @@ def test_eta_in_old_and_new_format():
+ def test_unknown_eta_format_fails_loudly():
+     with pytest.raises(ValueError):
+         parse_eta({"eta": "soon"})
++
++
++# --- exercise C13 ---------------------------------------------------------
++
++def test_street_addresses_are_masked():
++    assert guardrails.mask_pii("I live at 17 Riverside Drive, no power") == "I live at [address], no power"
++    assert guardrails.mask_pii("Outage since 4 PM") == "Outage since 4 PM"     # times aren't addresses
+-- 
+2.54.0 (Apple Git-157)
+
