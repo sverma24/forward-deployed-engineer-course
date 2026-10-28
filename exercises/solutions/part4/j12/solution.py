@@ -30,7 +30,8 @@ def clean(path):
             elif kwh < 0:
                 rejected.append((n, row, "negative reading"))
             elif (meter, date, kwh) in seen:
-                continue                                              # exact duplicate: keep the first
+                # Keep the first copy, but still report the repeat: nothing is dropped silently.
+                rejected.append((n, row, "exact duplicate of an earlier row (first one kept)"))
             else:
                 seen.add((meter, date, kwh))
                 good.append({"meter_id": meter, "date": date, "kwh": kwh, "site": row["site"].strip()})

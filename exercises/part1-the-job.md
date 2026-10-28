@@ -44,7 +44,7 @@ That's the tailor's job: the app works for everyone roughly, and the FDE makes i
 
 ## 1.4 Three different jobs hiding under one title
 
-**Your turn.** Read this made-up posting and decide which of the three jobs it really is: a builder, a sales engineer with extra steps, or an internal tools builder.
+**Your turn.** Read this made-up posting and decide which of the three jobs it really is: a builder, the sales engineer kind, or an internal tools builder.
 
 > *Forward Deployed Engineer.* You'll partner with our account executives on strategic opportunities, deliver compelling product demonstrations, run proofs of concept, and help shape the technical win strategy. Some scripting is a plus.
 
@@ -92,7 +92,7 @@ h) You write the first endpoint and its tests.
 
 **Your turn.** Write a short, honest note to yourself: which downside of the job (travel, pressure, constant switching between clients, being the face when things break) would be hardest for you, and one thing you'd do about it.
 
-**Model answer (one example).** "Being the person on the call when something breaks would scare me. To get used to it, I'll practise explaining a bug out loud to a friend in plain words, and I'll volunteer to answer support questions in my current job or college project."
+**Model answer (one example).** "Being the person on the call when something breaks would scare me. To get used to it, I'll practise explaining a bug out loud to a friend in plain words, and I'll offer to take the questions when our team demos our college project."
 
 There's no wrong answer. The point is to decide with your eyes open.
 
@@ -100,7 +100,7 @@ There's no wrong answer. The point is to decide with your eyes open.
 
 ## 1.8 What you already have
 
-**Your turn.** Write three lines in this form: *"I've done ___, which is the FDE skill of ___."*
+**Your turn.** Write three lines in this form: *"I've done (blank), which is the FDE skill of (blank)."*
 
 **Model answer (a QA tester).**
 - I've written test cases from vague requirements, which is the FDE skill of **turning a fuzzy request into a clear definition of done**.

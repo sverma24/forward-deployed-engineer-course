@@ -11,3 +11,7 @@ def test_save20_just_below_100():
 
 def test_save10_still_works():
     assert order_total(1, 50, coupon="SAVE10") == 45
+
+
+def test_save20_well_above_100():
+    assert order_total(2, 75, coupon="SAVE20") == 120

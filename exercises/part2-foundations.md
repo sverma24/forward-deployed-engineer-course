@@ -99,9 +99,9 @@ Total sales: 260
 
 **Your turn.** Add a `SAVE20` coupon: 20% off orders of $100 or more. Write the tests first, at the boundary.
 
-**Model answer.** `solutions/part2/f07/`. Three tests: exactly $100 gets the discount, $99.99 doesn't, and `SAVE10` still works.
+**Model answer.** `solutions/part2/f07/`. Four tests: exactly $100 gets the discount, $99 doesn't, $150 comes to $120, and `SAVE10` still works.
 ```
-3 passed
+4 passed
 ```
 
 ---
@@ -125,7 +125,7 @@ $ grep -v INFO app.log
 
 ## F9 Git and GitHub
 
-**Your turn.** Make a branch called `fix-typo`, change "weather api" to "weather API", look at the diff, commit it, and view the history.
+**Your turn.** In a tiny practice repo (one file, `app.py`, that prints "weather api", and one commit), make a branch called `fix-typo`, change "weather api" to "weather API", look at the diff, commit it, and view the history.
 
 **Model answer.**
 ```
@@ -270,11 +270,11 @@ Only the changed file was copied again. That's why the code goes in the last lay
 ## F21 What client systems really look like
 
 **Your turn.** The same person appears in three systems. Are they one customer, and which system do you trust for what?
-- Billing: `ACC 04471, E. Walker, 12 Elm St`
-- Customer service: `Emma Walker, account 4471, phone (788) 555-0199`
-- Field crew sheet: `Walker, Elm St, area S-07`
+- Billing: `ACC 04471, E. WALKER`
+- Customer service: `Emma Walker, account 4471, 17 Riverside Dr, phone (788) 555-0199`
+- Field crew sheet: `Walker, Riverside Dr, area S-07`
 
-**Model answer.** Very likely one customer. The account number matches once you drop the leading zero, and the name and street agree. Trust billing for the account number, customer service for the phone number, and the crew or network system for the area. Write that down as a rule, and confirm it with the client before you merge anything.
+**Model answer.** Very likely one customer. The account number matches once you drop the leading zero, the surname agrees, and two systems give the same street. Trust billing for the account number, customer service for the phone number, and the crew or network system for the area. Write that down as a rule, and confirm it with the client before you merge anything.
 
 ---
 
@@ -282,4 +282,4 @@ Only the changed file was copied again. That's why the code goes in the last lay
 
 **Your turn.** Ask Claude Code to add a `/stations` endpoint with a test. Ask for a plan first, then let it make the change, and review the diff.
 
-**Model answer.** `solutions/part2/f22-stations-endpoint.patch`. The plan said it would return a bare list. The actual change returned `{"stations": [...]}`, and it explained why. Both are reasonable, but **the plan and the change didn't match**, and only reading the diff caught it. That's why you review every diff yourself.
+**Model answer.** `solutions/part2/f22-stations-endpoint.patch`. The plan said it would return a bare list and asked which format we wanted. Without answering, we ran the request again with edits allowed, and the change returned `{"stations": [...]}`, explaining why afterwards. Both are reasonable, but **the plan and the change didn't match**, and only reading the diff caught it. That's why you review every diff yourself.

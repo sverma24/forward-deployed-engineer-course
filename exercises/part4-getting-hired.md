@@ -35,7 +35,7 @@ The coding answers (J12, J13) are in `exercises/solutions/part4/`, with tests.
 **Model answer.**
 > **Outage Desk: restore times for a utility call center**
 > **Problem:** on storm nights, agents checked three systems per call and customers called back because times were stale.
-> **Result:** 30 of 30 real agent questions answered correctly with sources; a local-model version runs with no data leaving the server.
+> **Result:** 30 of 30 real agent questions answered correctly with Claude; 23 of 30 with a small local model that keeps customer data on the client's server, guarded so it never invents a restore time.
 > **What's here:** the code, the discovery note, the scope, decision records, the eval set and a postmortem.
 
 ---
@@ -124,10 +124,11 @@ It's short, it's about them first, and it asks for something small.
 
 ## J12 Coding round one: clean a messy file
 
-**Your turn.** Add a rule: a meter can't use negative energy, so reject negative readings with a reason.
+**Your turn.** Add a rule: a meter can't use negative energy, so reject negative readings with a reason. First add a test row to `meters.csv`: `M-006,2026-10-02,-15,Garage`.
 
 **Model answer.** `solutions/part4/j12/`
 ```
+REJECTED line 9: exact duplicate of an earlier row (first one kept): ...
 REJECTED line 10: negative reading: {'meter_id': 'M-006', 'reading_date': '2026-10-02', 'kwh': '-15', ...}
 test_solution.py::test_negative_reading_rejected PASSED
 ```

@@ -1,43 +1,48 @@
-From aad12d3bf79dbec37f6ea02849360e3321220d77 Mon Sep 17 00:00:00 2001
-From: Saurav Verma <sauravverma.genai@gmail.com>
-Date: Tue, 27 Oct 2026 22:35:29 +0530
-Subject: [PATCH] C21 exercise: flag invented dollar amounts
-
----
- outage-desk/outage_desk/factcheck.py | 14 ++++++++++++++
- outage-desk/tests/test_core.py       | 10 ++++++++++
- 2 files changed, 24 insertions(+)
-
+diff --git a/outage-desk/outage_desk/agent.py b/outage-desk/outage_desk/agent.py
+index b760b40..789bd91 100644
+--- a/outage-desk/outage_desk/agent.py
++++ b/outage-desk/outage_desk/agent.py
+@@ -88,6 +88,9 @@ def ask(question, context="", backend=None, trace=True):
+         steps.append({"turn": turn, "decision": decision})
+         if decision.get("action") == "answer":
+             answer, unknown = factcheck.check(decision.get("answer", ""), steps, also_allowed=[now().isoformat()])
++            amounts = factcheck.unknown_amounts(answer, steps, question)
++            if amounts:
++                answer += f" WARNING: check this answer; ${', $'.join(amounts)} isn't in any source."
+             result = {"answer": answer, "sources": decision.get("sources", []), "times_not_in_data": unknown,
+                       "turns": turn, "seconds": round(time.time() - started, 1), "steps": steps}
+             break
 diff --git a/outage-desk/outage_desk/factcheck.py b/outage-desk/outage_desk/factcheck.py
-index d982001..2b194a7 100644
+index d982001..e7f1127 100644
 --- a/outage-desk/outage_desk/factcheck.py
 +++ b/outage-desk/outage_desk/factcheck.py
-@@ -57,6 +57,20 @@ def answer_from_data(steps):
-     return None
- 
- 
+@@ -68,3 +68,21 @@ def check(answer, steps, also_allowed=()):
+     if replacement:
+         return replacement + " (Answer rebuilt from the data: the model's version had a time that isn't in any source.)", unknown
+     return answer + f" WARNING: check this answer; {', '.join(unknown)} isn't in any source.", unknown
++
++
 +MONEY = re.compile(r"\$\s?(\d+(?:\.\d{2})?)")
 +NUMBER = re.compile(r"\b(\d+(?:\.\d+)?)\b")
 +
 +
-+def unknown_amounts(answer, steps):
-+    """Dollar amounts in the answer that are neither in the tool data nor a simple product of numbers in it
-+    (like $30 = 3 hours x $10), so a correctly worked-out credit still passes."""
-+    data = " ".join(str(r["result"]) for s in steps for r in s.get("results", []))
-+    nums = {float(n) for n in NUMBER.findall(data)}
-+    allowed = nums | {a * b for a in nums for b in nums} | {a - b for a in nums for b in nums} \
-+        | {(a - b) * c for a in nums for b in nums for c in nums if a > b and a - b < 50}
++RATE = re.compile(r"\$\s?(\d+(?:\.\d+)?)|(\d+(?:\.\d+)?) dollars")
++
++
++def unknown_amounts(answer, steps, question=""):
++    """Dollar amounts in the answer that can't be found in the tool data or the question, or worked out
++    as a number of hours times a dollar rate from the data (like (15 - 12) x $10 = $30). Those were invented."""
++    text = question + " " + " ".join(str(r["result"]) for s in steps for r in s.get("results", []))
++    nums = {float(n) for n in NUMBER.findall(text)}
++    rates = {float(a or b) for a, b in RATE.findall(text)}
++    hours = nums | {a - b for a in nums for b in nums if a > b}
++    allowed = nums | {h * r for h in hours for r in rates}
 +    return [m for m in MONEY.findall(answer) if float(m) not in allowed]
-+
-+
- def check(answer, steps, also_allowed=()):
-     """Returns (answer to show, list of times that weren't in the data).
-     also_allowed: other ISO times the answer may mention, like the current time."""
 diff --git a/outage-desk/tests/test_core.py b/outage-desk/tests/test_core.py
-index 8a4f46c..f449979 100644
+index 8a4f46c..905fb78 100644
 --- a/outage-desk/tests/test_core.py
 +++ b/outage-desk/tests/test_core.py
-@@ -146,3 +146,13 @@ def test_eta_in_old_and_new_format():
+@@ -146,3 +146,14 @@ def test_eta_in_old_and_new_format():
  def test_unknown_eta_format_fails_loudly():
      with pytest.raises(ValueError):
          parse_eta({"eta": "soon"})
@@ -49,8 +54,6 @@ index 8a4f46c..f449979 100644
 +    from outage_desk import factcheck
 +    steps = [{"results": [{"tool": "search_policies", "result": {"results": [{"text":
 +        "A credit of 10 dollars for every full hour beyond the first 12 hours, up to a maximum of 200 dollars"}]}}]}]
-+    assert factcheck.unknown_amounts("A 15-hour outage earns $30.", steps + [{"results": [{"tool": "x", "result": "15"}]}]) == []
-+    assert factcheck.unknown_amounts("They'll get $75.", steps) == ["75"]
--- 
-2.54.0 (Apple Git-157)
-
++    question = "Does a customer get a credit after a 15-hour outage?"
++    assert factcheck.unknown_amounts("A 15-hour outage earns $30.", steps, question) == []
++    assert factcheck.unknown_amounts("They'll get $75.", steps, question) == ["75"]
